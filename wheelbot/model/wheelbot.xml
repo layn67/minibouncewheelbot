@@ -1,0 +1,133 @@
+<mujoco model="jumpwheelbot">
+  <compiler angle="radian" coordinate="local"/>
+  <option timestep="0.002" gravity="0 0 -9.81" integrator="RK4"
+          cone="elliptic" iterations="100" tolerance="1e-10"/>
+
+  <default>
+    <geom rgba="0.7 0.7 0.75 1"/>
+    <joint damping="0.001"/>
+    <motor ctrllimited="true" ctrlrange="-0.5 0.5"/>
+
+    <default class="terrain_collision">
+      <geom priority="0" friction="0.80 0.0002 0.0001" condim="6"
+            solref="0.008 1.0" solimp="0.90 0.98 0.001"/>
+    </default>
+    <default class="body_collision">
+      <geom priority="1" friction="0.45 0.0001 0.0001" condim="6"
+            solref="0.004 1.0" solimp="0.95 0.99 0.0005"/>
+    </default>
+    <default class="pitch_rocker_collision">
+      <geom priority="2" friction="1.20 0.0005 0.0003" condim="6"
+            solref="0.004 1.0" solimp="0.95 0.99 0.0005"/>
+    </default>
+    <default class="tyre_collision">
+      <geom priority="2" friction="1.20 0.0005 0.0003" condim="6"
+            solref="0.006 0.8" solimp="0.90 0.98 0.001"/>
+    </default>
+    <default class="visual">
+      <geom contype="0" conaffinity="0" density="0" group="2"/>
+    </default>
+  </default>
+
+  <asset>
+    <mesh name="wheel_y_tire_mesh" file="wheel_tire.obj"/>
+  </asset>
+
+  <worldbody>
+    <light pos="0 0 2"/>
+    <geom name="floor" class="terrain_collision" type="plane" size="2 2 0.1" rgba="0.9 0.9 0.9 1"/>
+    <body name="demo_obstacle_body" mocap="true" pos="0 3 -1"><geom name="demo_obstacle" class="terrain_collision" type="box" size="0.012 0.18 0.018" rgba="0.95 0.38 0.16 0" contype="0" conaffinity="0"/></body>
+    <body name="demo_feature_1_body" mocap="true" pos="0 3 -1"><geom name="demo_feature_1" class="terrain_collision" type="box" size="0.024 0.18 0.024" rgba="0.95 0.38 0.16 0" contype="0" conaffinity="0"/></body>
+    <body name="demo_feature_2_body" mocap="true" pos="0 3 -1"><geom name="demo_feature_2" class="terrain_collision" type="box" size="0.024 0.18 0.024" rgba="0.16 0.55 0.95 0" contype="0" conaffinity="0"/></body>
+    <body name="demo_feature_3_body" mocap="true" pos="0 3 -1"><geom name="demo_feature_3" class="terrain_collision" type="box" size="0.024 0.18 0.024" rgba="0.28 0.78 0.38 0" contype="0" conaffinity="0"/></body>
+
+    <body name="wheelbot" pos="0 0 0.2">
+      <freejoint/>
+      <geom name="unified_body_core" class="visual" type="box" pos="0 0 0" size="0.026 0.042 0.030" rgba="0.78 0.80 0.83 0.86"/>
+      <geom name="unified_housing_shell" class="visual" type="box" pos="0 0 0" size="0.031 0.048 0.024" rgba="0.70 0.73 0.76 0.55"/>
+      <geom name="central_roll_rocker_left_visual" class="visual" type="ellipsoid" pos="0 0.050 0" size="0.024 0.003 0.017" rgba="0.76 0.63 0.38 0.92"/>
+      <geom name="central_roll_rocker_right_visual" class="visual" type="ellipsoid" pos="0 -0.050 0" size="0.024 0.003 0.017" rgba="0.76 0.63 0.38 0.92"/>
+
+      <body name="wheel_x_end" pos="0 0 0">
+        <joint name="q_jump" type="slide" axis="0 0 -1" limited="true" range="0 0.030" damping="1.0772" stiffness="6000" springref="0" armature="0" solreflimit="-218023 -88.5" solimplimit="0.95 0.99 0.001"/>
+        <inertial pos="0 0 0.014" mass="0.215" diaginertia="0.000179 0.000179 0.000131"/>
+        <geom name="upper_body_collision" class="body_collision" type="box" pos="0 0 0.018" size="0.026 0.030 0.014" density="0" rgba="0 0 0 0" group="3"/>
+        <geom name="upper_roll_rocker_left" class="body_collision" type="capsule" fromto="-0.030 0.046 0.018 0.030 0.046 0.018" size="0.0045" density="0" rgba="0.76 0.63 0.38 0.95"/>
+        <geom name="upper_roll_rocker_right" class="body_collision" type="capsule" fromto="-0.030 -0.046 0.018 0.030 -0.046 0.018" size="0.0045" density="0" rgba="0.76 0.63 0.38 0.95"/>
+        <geom name="upper_pitch_rocker_front" class="pitch_rocker_collision" type="capsule" fromto="0.034 -0.036 0.018 0.034 0.036 0.018" size="0.0045" density="0" group="3" rgba="0.62 0.65 0.68 0.65"/>
+        <geom name="upper_pitch_rocker_back" class="pitch_rocker_collision" type="capsule" fromto="-0.034 -0.036 0.018 -0.034 0.036 0.018" size="0.0045" density="0" group="3" rgba="0.62 0.65 0.68 0.65"/>
+        <geom name="upper_body_core" class="visual" type="box" pos="0 0 0.026" size="0.024 0.039 0.014" rgba="0.82 0.84 0.86 0.92"/>
+        <geom name="upper_housing_shell" class="visual" type="box" pos="0 0 0.022" size="0.028 0.044 0.012" rgba="0.58 0.61 0.64 0.55"/>
+        <geom name="housing_top_front" class="visual" type="capsule" fromto="-0.018 0.039 0.026 0.018 0.039 0.026" size="0.0045" rgba="0.9 0.91 0.92 1"/>
+        <geom name="housing_top_back" class="visual" type="capsule" fromto="-0.018 -0.039 0.026 0.018 -0.039 0.026" size="0.0045" rgba="0.9 0.91 0.92 1"/>
+        <geom name="sliding_piston_core" class="visual" type="box" pos="0 0 0.004" size="0.015 0.017 0.030" rgba="0.30 0.33 0.36 0.82"/>
+        <geom name="sliding_piston_guide_left" class="visual" type="capsule" fromto="-0.014 0 -0.018 -0.014 0 0.024" size="0.002" rgba="0.16 0.18 0.20 0.26"/>
+        <geom name="sliding_piston_guide_right" class="visual" type="capsule" fromto="0.014 0 -0.018 0.014 0 0.024" size="0.002" rgba="0.16 0.18 0.20 0.26"/>
+        <geom name="upper_actuator_collar" class="visual" type="box" pos="0 0 0.040" size="0.028 0.032 0.004" rgba="0.50 0.53 0.56 1"/>
+        <geom name="wheel_x_motor_bridge" class="visual" type="capsule" fromto="-0.018 0 0.052 0.018 0 0.052" size="0.012" rgba="0.34 0.37 0.40 1"/>
+        <geom name="wheel_x_mount_fairing" class="visual" type="ellipsoid" pos="0 0 0.046" size="0.026 0.028 0.014" rgba="0.66 0.68 0.71 0.95"/>
+
+        <body name="wheel_x" pos="0 0 0.066">
+          <inertial pos="0 0 0" mass="0.129" diaginertia="0.000120 0.000063 0.000063"/>
+          <joint name="q_wheel_x" type="hinge" axis="1 0 0" damping="0.00001"/>
+          <geom name="wheel_x_geom" class="tyre_collision" type="mesh" mesh="wheel_y_tire_mesh" euler="0 0 1.57079632679" density="0" rgba="0.09 0.09 0.1 1"/>
+          <geom name="wheel_x_hub" class="visual" type="cylinder" fromto="-0.008 0 0 0.008 0 0" size="0.013" rgba="0.20 0.21 0.22 1"/>
+          <geom name="wheel_x_inner_ring" class="visual" type="cylinder" fromto="-0.0105 0 0 0.0105 0 0" size="0.024" rgba="0.66 0.48 0.18 1"/>
+          <geom name="wheel_x_face_left" class="visual" type="cylinder" pos="-0.0105 0 0" euler="0 1.57079632679 0" size="0.024 0.001" rgba="0.72 0.54 0.22 1"/>
+          <geom name="wheel_x_face_right" class="visual" type="cylinder" pos="0.0105 0 0" euler="0 1.57079632679 0" size="0.024 0.001" rgba="0.72 0.54 0.22 1"/>
+          <geom name="wheel_x_rotation_dot_left" class="visual" type="sphere" pos="-0.012 0 0.026" size="0.005" rgba="1.0 0.95 0.10 1"/>
+          <geom name="wheel_x_rotation_dot_right" class="visual" type="sphere" pos="0.012 0 0.026" size="0.005" rgba="1.0 0.95 0.10 1"/>
+        </body>
+      </body>
+
+      <body name="wheel_y_end" pos="0 0 0">
+        <inertial pos="0 0 -0.014" mass="0.215" diaginertia="0.000179 0.000179 0.000131"/>
+        <geom name="lower_body_collision" class="body_collision" type="box" pos="0 0 -0.018" size="0.026 0.030 0.014" density="0" rgba="0 0 0 0" group="3"/>
+        <geom name="lower_roll_rocker_left" class="body_collision" type="capsule" fromto="-0.030 0.046 -0.018 0.030 0.046 -0.018" size="0.0045" density="0" rgba="0.76 0.63 0.38 0.95"/>
+        <geom name="lower_roll_rocker_right" class="body_collision" type="capsule" fromto="-0.030 -0.046 -0.018 0.030 -0.046 -0.018" size="0.0045" density="0" rgba="0.76 0.63 0.38 0.95"/>
+        <geom name="lower_pitch_rocker_front" class="pitch_rocker_collision" type="capsule" fromto="0.034 -0.036 -0.018 0.034 0.036 -0.018" size="0.0045" density="0" group="3" rgba="0.62 0.65 0.68 0.65"/>
+        <geom name="lower_pitch_rocker_back" class="pitch_rocker_collision" type="capsule" fromto="-0.034 -0.036 -0.018 -0.034 0.036 -0.018" size="0.0045" density="0" group="3" rgba="0.62 0.65 0.68 0.65"/>
+        <geom name="lower_body_core" class="visual" type="box" pos="0 0 -0.026" size="0.024 0.039 0.014" rgba="0.82 0.84 0.86 0.92"/>
+        <geom name="lower_housing_shell" class="visual" type="box" pos="0 0 -0.022" size="0.028 0.044 0.012" rgba="0.58 0.61 0.64 0.55"/>
+        <geom name="housing_bottom_front" class="visual" type="capsule" fromto="-0.018 0.039 -0.026 0.018 0.039 -0.026" size="0.0045" rgba="0.9 0.91 0.92 1"/>
+        <geom name="housing_bottom_back" class="visual" type="capsule" fromto="-0.018 -0.039 -0.026 0.018 -0.039 -0.026" size="0.0045" rgba="0.9 0.91 0.92 1"/>
+        <geom name="fixed_outer_sleeve" class="visual" type="box" pos="0 0 -0.004" size="0.031 0.048 0.020" rgba="0.88 0.89 0.90 0.50"/>
+        <geom name="lower_actuator_collar" class="visual" type="box" pos="0 0 -0.040" size="0.028 0.032 0.004" rgba="0.50 0.53 0.56 1"/>
+        <geom name="lower_piston_guide_left" class="visual" type="capsule" fromto="-0.014 0 -0.024 -0.014 0 0.018" size="0.002" rgba="0.16 0.18 0.20 0.20"/>
+        <geom name="lower_piston_guide_right" class="visual" type="capsule" fromto="0.014 0 -0.024 0.014 0 0.018" size="0.002" rgba="0.16 0.18 0.20 0.20"/>
+        <geom name="wheel_y_motor_bridge" class="visual" type="capsule" fromto="0 -0.018 -0.052 0 0.018 -0.052" size="0.012" rgba="0.34 0.37 0.40 1"/>
+        <geom name="wheel_y_mount_fairing" class="visual" type="ellipsoid" pos="0 0 -0.046" size="0.028 0.026 0.014" rgba="0.66 0.68 0.71 0.95"/>
+
+        <body name="wheel_y" pos="0 0 -0.066">
+          <inertial pos="0 0 0" mass="0.129" diaginertia="0.000063 0.000120 0.000063"/>
+          <joint name="q_wheel_y" type="hinge" axis="0 1 0" damping="0.00001"/>
+          <geom name="wheel_y_geom" class="tyre_collision" type="mesh" mesh="wheel_y_tire_mesh" density="0" rgba="0.09 0.09 0.1 1"/>
+          <geom name="wheel_y_hub" class="visual" type="cylinder" fromto="0 -0.008 0 0 0.008 0" size="0.013" rgba="0.20 0.21 0.22 1"/>
+          <geom name="wheel_y_inner_ring" class="visual" type="cylinder" fromto="0 -0.0105 0 0 0.0105 0" size="0.024" rgba="0.66 0.48 0.18 1"/>
+          <geom name="wheel_y_face_left" class="visual" type="cylinder" pos="0 -0.0105 0" euler="1.57079632679 0 0" size="0.024 0.001" rgba="0.72 0.54 0.22 1"/>
+          <geom name="wheel_y_face_right" class="visual" type="cylinder" pos="0 0.0105 0" euler="1.57079632679 0 0" size="0.024 0.001" rgba="0.72 0.54 0.22 1"/>
+          <geom name="wheel_y_rotation_dot_left" class="visual" type="sphere" pos="0 -0.012 0.026" size="0.005" rgba="1.0 0.95 0.10 1"/>
+          <geom name="wheel_y_rotation_dot_right" class="visual" type="sphere" pos="0 0.012 0.026" size="0.005" rgba="1.0 0.95 0.10 1"/>
+        </body>
+      </body>
+
+    </body>
+  </worldbody>
+
+  <actuator>
+    <motor name="tau_wheel_y" joint="q_wheel_y"/>
+    <motor name="tau_wheel_x" joint="q_wheel_x"/>
+    <motor name="tau_jump" joint="q_jump"
+           ctrllimited="true" ctrlrange="-120 120"
+           forcelimited="true" forcerange="-120 120"/>
+  </actuator>
+
+  <contact>
+    <exclude body1="wheel_x_end" body2="wheel_y_end"/>
+    <exclude body1="wheel_y_end" body2="wheel_y"/>
+    <exclude body1="wheel_y_end" body2="wheel_x"/>
+    <exclude body1="wheel_x_end" body2="wheel_y"/>
+    <exclude body1="wheel_x_end" body2="wheel_x"/>
+    <exclude body1="wheel_y" body2="wheel_x"/>
+  </contact>
+</mujoco>
